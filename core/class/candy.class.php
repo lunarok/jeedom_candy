@@ -21,7 +21,7 @@ require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
 
 class candy extends eqLogic {
 	public static function cron5() {
-		$eqLogics = eqLogic::byType('shelly', true);
+		$eqLogics = eqLogic::byType('candy', true);
 		foreach ($eqLogics as $eqLogic) {
 			$eqLogic->refresh();
 		}
@@ -64,7 +64,8 @@ class candy extends eqLogic {
 	public function refresh() {
 		$cmd = realpath(dirname(__FILE__) . '/../../resources') . '/candy.py ' . $this->getConfiguration('ip');
 		$result = exec($cmd);
-		log::add('candy', 'debug', 'result : ' . $result);
+		log::add('candy', 'debug', 'Cmd : ' . $cmd);
+		log::add('candy', 'debug', 'Result : ' . $result);
 	}
 }
 

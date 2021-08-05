@@ -18,6 +18,6 @@ def decode(uri):
 
 key = getkey()
 
-print(key)
+#print(key)
 print(decode("http-read.json?encrypted=1"))
-print(decode("http-getStatistics.json?encrypted=1"))
+#print(decode("http-getStatistics.json?encrypted=1"))
