@@ -3,6 +3,7 @@ import subprocess,asyncio,json,time,argparse,re
 
 parser = argparse.ArgumentParser()
 parser.add_argument("ip", help="ip")
+args = parser.parse_args()
 
 def getkey():
 	input = requests.get("http://" + args.ip + "/http-write.json?encrypted=1&BM=1").text
