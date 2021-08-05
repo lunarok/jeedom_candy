@@ -20,6 +20,13 @@
 require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
 
 class candy extends eqLogic {
+	public static function cron5() {
+		$eqLogics = eqLogic::byType('shelly', true);
+		foreach ($eqLogics as $eqLogic) {
+			$eqLogic->refresh();
+		}
+	}
+
 	public function loadCmdFromConf($type) {
 		if (!is_file(dirname(__FILE__) . '/../config/devices/' . $type . '.json')) {
 			return;
@@ -50,8 +57,14 @@ class candy extends eqLogic {
 		}
 	}
 
-	public function postSave() {
+	/*public function postSave() {
 		$this->loadCmdFromConf('candy');
+	}*/
+
+	public function refresh() {
+		$cmd = realpath(dirname(__FILE__) . '/../../resources') . '/candy.py ' . $this->getConfiguration('ip');
+		$result = exec($cmd);
+		log::add('candy', 'debug', 'result : ' . $result);
 	}
 }
 
@@ -63,33 +76,6 @@ class candyCmd extends cmd {
 					$eqLogic->refresh();
 					return;
 				}
-				$put = array();
-				if ($this->getSubType() == 'slider') {
-					$put[$this->getConfiguration('argument')] = $_options['slider'];
-				} else if ($this->getSubType() == 'select') {
-					$put[$this->getConfiguration('argument')] = $_options['select'];
-				} else if ($this->getSubType() == 'message') {
-					$put[$this->getConfiguration('argument')] = $_options['title'];
-					if ($this->getConfiguration('argument') == 'command') {
-						$put['arguments'][] = $_options['message'];
-					} else {
-						if (strpos('icone=',$_options['message']) === false) {
-							$put['message'][] = $_options['message'];
-						} else {
-							$parts = explode(';', str_replace('icone=','',$_options['message']));
-							$put['message'][] = $parts[1];
-							$put['icon'][] = $parts[0];
-						}
-					}
-				} else {
-					$put[$this->getConfiguration('argument')] = $this->getConfiguration('value');
-				}
-				if (strpos('audio',$this->getConfiguration('request')) === false) {
-					$method = 'post';
-				} else {
-					$method = 'put';
-				}
-				$eqLogic->callOpenData($this->getConfiguration('request'),$put,$method);
 			}
 		}
 }
