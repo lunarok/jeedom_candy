@@ -62,7 +62,7 @@ class candy extends eqLogic {
 	}*/
 
 	public function refresh() {
-		$cmd = realpath(dirname(__FILE__) . '/../../resources') . '/candy.py ' . $this->getConfiguration('ip');
+		$cmd = 'python3 ' . realpath(dirname(__FILE__) . '/../../resources') . '/candy.py ' . $this->getConfiguration('ip');
 		$result = exec($cmd);
 		log::add('candy', 'debug', 'Cmd : ' . $cmd);
 		log::add('candy', 'debug', 'Result : ' . $result);
