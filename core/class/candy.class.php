@@ -57,15 +57,45 @@ class candy extends eqLogic {
 		}
 	}
 
-	/*public function postSave() {
-		$this->loadCmdFromConf('candy');
-	}*/
+	public function preSave() {
+		$this->getKey();
+	}
+
+	public function postSave() {
+		//$this->loadCmdFromConf('candy');
+		$this->refresh();
+	}
 
 	public function refresh() {
-		$cmd = 'python3 ' . realpath(dirname(__FILE__) . '/../../resources') . '/candy.py ' . $this->getConfiguration('ip');
+		$this->getStatus();
+		//$this->getStatistics();
+	}
+
+	public function getKey() {
+		$result = $this->command('key');
+		$this->setConfiguration('key', $result);
+	}
+
+	public function getStatus() {
+		$result = $this->command('status');
+		foreach (json_decode($result,true) as $key => $value) {
+			$this->checkAndUpdateCmd($key, $value);
+		}
+	}
+
+	public function getStatistics() {
+		$result = $this->command('stats');
+		foreach (json_decode($result,true) as $key => $value) {
+			$this->checkAndUpdateCmd($key, $value);
+		}
+	}
+
+	public function command($_key == 'status') {
+		$cmd = 'python3 ' . realpath(dirname(__FILE__) . '/../../resources') . '/candy.py ' . $this->getConfiguration('ip') . ' ' . $this->getConfiguration('key', '0000') . ' ' . $_key;
 		$result = exec($cmd);
 		log::add('candy', 'debug', 'Cmd : ' . $cmd);
 		log::add('candy', 'debug', 'Result : ' . $result);
+		return $result;
 	}
 }
 
