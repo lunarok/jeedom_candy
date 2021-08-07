@@ -3,6 +3,8 @@ import subprocess,asyncio,json,time,argparse,re
 
 parser = argparse.ArgumentParser()
 parser.add_argument("ip", help="ip")
+parser.add_argument("key", help="key")
+parser.add_argument("command", help="command")
 args = parser.parse_args()
 
 def getkey():
@@ -14,10 +16,13 @@ def getkey():
 def decode(uri):
 	status = requests.get("http://" + args.ip + "/" + uri).text
 
-	return "".join([chr(ord(key[idx % len(key)]) ^ int(status[i:i+2], 16)) for idx,i in enumerate(range(0, len(status), 2))])
+	return "".join([chr(ord(args.key[idx % len(args.key)]) ^ int(status[i:i+2], 16)) for idx,i in enumerate(range(0, len(status), 2))])
 
 key = getkey()
 
-#print(key)
-print(decode("http-read.json?encrypted=1"))
-#print(decode("http-getStatistics.json?encrypted=1"))
+if args.command == 'key' :
+	print(key)
+if args.command == 'status' :
+	print(decode("http-read.json?encrypted=1"))
+if args.command == 'stats' :
+	print(decode("http-getStatistics.json?encrypted=1"))
