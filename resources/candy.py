@@ -18,8 +18,6 @@ def decode(uri):
 
 	return "".join([chr(ord(args.key[idx % len(args.key)]) ^ int(status[i:i+2], 16)) for idx,i in enumerate(range(0, len(status), 2))])
 
-key = getkey()
-
 if args.command == 'key' :
 	print(key)
 if args.command == 'status' :
