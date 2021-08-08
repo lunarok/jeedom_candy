@@ -19,7 +19,7 @@ def decode(uri):
 	return "".join([chr(ord(args.key[idx % len(args.key)]) ^ int(status[i:i+2], 16)) for idx,i in enumerate(range(0, len(status), 2))])
 
 if args.command == 'key' :
-	print(key)
+	print(getkey())
 if args.command == 'status' :
 	print(decode("http-read.json?encrypted=1"))
 if args.command == 'stats' :
