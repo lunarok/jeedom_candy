@@ -72,13 +72,26 @@ class candy extends eqLogic {
 	}
 
 	public function getKey() {
-		$result = $this->command('key');
-		$this->setConfiguration('key', $result);
+		if ($this->getConfiguration('key', '0000') == '0000') {
+			$result = $this->command('key');
+			$this->setConfiguration('key', $result);
+		}
 	}
 
 	public function getStatus() {
 		$result = $this->command('status');
 		foreach (json_decode($result,true) as $key => $value) {
+			$cmdtest = $this->getCmd(null, $key);
+			if (!is_object($cmdtest)) {
+				$cmd = new candyCmd();
+				$cmd->setName('Statut ' . $key);
+				$cmd->setEqLogic_id($this->id);
+				$cmd->setEqType('candy');
+				$cmd->setLogicalId($key);
+				$cmd->setType('info');
+				$cmd->setSubType('string');
+				$cmd->save();
+			}
 			$this->checkAndUpdateCmd($key, $value);
 		}
 	}
@@ -86,6 +99,17 @@ class candy extends eqLogic {
 	public function getStatistics() {
 		$result = $this->command('stats');
 		foreach (json_decode($result,true) as $key => $value) {
+			$cmdtest = $this->getCmd(null, $key);
+			if (!is_object($cmdtest)) {
+				$cmd = new candyCmd();
+				$cmd->setName('Statistique ' . $key);
+				$cmd->setEqLogic_id($this->id);
+				$cmd->setEqType('candy');
+				$cmd->setLogicalId($key);
+				$cmd->setType('info');
+				$cmd->setSubType('string');
+				$cmd->save();
+			}
 			$this->checkAndUpdateCmd($key, $value);
 		}
 	}
