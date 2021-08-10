@@ -59,7 +59,6 @@ class candy extends eqLogic {
 
 	public function postAjax() {
 		$this->loadCmdFromConf('candy');
-		$this->refresh();
 	}
 
 	public function refresh() {
