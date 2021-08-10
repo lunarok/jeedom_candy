@@ -57,12 +57,8 @@ class candy extends eqLogic {
 		}
 	}
 
-	public function preSave() {
-		$this->getKey();
-	}
-
 	public function postSave() {
-		//$this->loadCmdFromConf('candy');
+		$this->loadCmdFromConf('candy');
 		$this->refresh();
 	}
 
@@ -75,51 +71,61 @@ class candy extends eqLogic {
 		if ($this->getConfiguration('key', '0000') == '0000') {
 			$result = $this->command('key');
 			$this->setConfiguration('key', $result);
+			$this->save();
 		}
 	}
 
 	public function getStatus() {
 		$result = $this->command('status');
 		foreach (json_decode($result,true) as $key => $value) {
-			$cmdtest = $this->getCmd(null, $key);
-			if (!is_object($cmdtest)) {
-				$cmd = new candyCmd();
-				$cmd->setName('Statut ' . $key);
-				$cmd->setEqLogic_id($this->id);
-				$cmd->setEqType('candy');
-				$cmd->setLogicalId($key);
-				$cmd->setType('info');
-				$cmd->setSubType('string');
-				$cmd->save();
-			}
-			$this->checkAndUpdateCmd($key, $value);
+			$this->updateCmd($key, $value);
 		}
 	}
 
 	public function getStatistics() {
 		$result = $this->command('stats');
 		foreach (json_decode($result,true) as $key => $value) {
-			$cmdtest = $this->getCmd(null, $key);
-			if (!is_object($cmdtest)) {
-				$cmd = new candyCmd();
-				$cmd->setName('Statistique ' . $key);
-				$cmd->setEqLogic_id($this->id);
-				$cmd->setEqType('candy');
-				$cmd->setLogicalId($key);
-				$cmd->setType('info');
-				$cmd->setSubType('string');
-				$cmd->save();
-			}
-			$this->checkAndUpdateCmd($key, $value);
+			$this->updateCmd($key, $value);
 		}
 	}
 
+	public function updateCmd($_cmd, $_value) {
+		$cmdtest = $this->getCmd(null, $_cmd);
+		if (!is_object($cmdtest)) {
+			$cmd = new candyCmd();
+			$cmd->setName('Statistique ' . $_cmd);
+			$cmd->setEqLogic_id($this->id);
+			$cmd->setEqType('candy');
+			$cmd->setLogicalId($_cmd);
+			$cmd->setType('info');
+			$cmd->setSubType('string');
+			$cmd->save();
+		}
+		$this->checkAndUpdateCmd($_cmd, $_value);
+	}
+
 	public function command($_key = 'status') {
-		$cmd = 'python3 ' . realpath(dirname(__FILE__) . '/../../resources') . '/candy.py ' . $this->getConfiguration('ip') . ' ' . $this->getConfiguration('key', '0000') . ' ' . $_key;
-		$result = shell_exec($cmd);
-		log::add('candy', 'debug', 'Cmd : ' . $cmd);
-		log::add('candy', 'debug', 'Result : ' . $result);
-		return $result;
+		if ($this->pingHost($this->getConfiguration('ip'))) {
+			$cmd = 'python3 ' . realpath(dirname(__FILE__) . '/../../resources') . '/candy.py ' . $this->getConfiguration('ip') . ' ' . $this->getConfiguration('key', '0000') . ' ' . $_key;
+			$result = shell_exec($cmd);
+			log::add('candy', 'debug', 'Cmd : ' . $cmd);
+			log::add('candy', 'debug', 'Result : ' . $result);
+			return $result;
+		} else {
+		  return '0000';
+		}
+	}
+
+	public function pingHost($host, $timeout = 1) {
+	  exec(system::getCmdSudo() . "ping -c1 " . $host, $output, $return_var);
+	  if ($return_var == 0) {
+	    $result = true;
+	    $this->checkAndUpdateCmd('online', 1);
+	  } else {
+	    $result = false;
+	    $this->checkAndUpdateCmd('online', 0);
+	  }
+	  return $result;
 	}
 }
 

@@ -120,6 +120,22 @@ $eqLogics = eqLogic::byType('candy');
               </div>
             </div>
 
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Clef de chiffrage</label>
+              <div class="col-sm-3">
+                <span class="eqLogicAttr" data-l1key="configuration" data-l2key="key"></span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Récupérer la clef</label>
+              <div class="col-sm-3">
+                <span class="input-group-btn">
+          				<a class="btn btn-primary btn-sm eqLogicAction syncinfo roundedLeft" id="bt_getKey"><i class="fas fa-spinner" title="{{Récupérer la clef}}"></i> {{Récupérer la clef}}</a>
+          			</span>
+              </div>
+            </div>
+
           </fieldset>
         </form>
       </div>

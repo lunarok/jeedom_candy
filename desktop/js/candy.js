@@ -13,6 +13,32 @@
  * You should have received a copy of the GNU General Public License
  * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
  */
+ $("#bt_getKey").on('click', function () {
+	bootbox.confirm('{{Etes-vous sûr de vouloir récupérer la clef de chiffrage ?',
+	function (result) {
+		if (result) {
+			$.ajax({// fonction permettant de faire de l'ajax
+			type: "POST", // methode de transmission des données au fichier php
+			url: "plugins/candy/core/ajax/candy.ajax.php", // url du fichier php
+			data: {
+				action: "getKey"
+			},
+			dataType: 'json',
+			error: function(request, status, error) {
+				handleAjaxError(request, status, error);
+			},
+			success: function(data) { // si l'appel a bien fonctionné
+			if (data.state != 'ok') {
+				$('#div_alert').showAlert({message:  data.result,level: 'danger'});
+				return;
+			}
+			modifyWithoutSave=false;
+		}
+	});
+}
+}
+);
+});
 
  $("#butCol").click(function(){
    $("#hidCol").toggle("slow");
