@@ -57,7 +57,7 @@ class candy extends eqLogic {
 		}
 	}
 
-	public function postSave() {
+	public function postAjax() {
 		$this->loadCmdFromConf('candy');
 		$this->refresh();
 	}
@@ -78,18 +78,20 @@ class candy extends eqLogic {
 	public function getStatus() {
 		$result = $this->command('status');
 		foreach (json_decode($result,true) as $key => $value) {
-			$this->updateCmd($key, $value);
+			$this->checkCmd($key, $value);
+			$this->checkAndUpdateCmd($_cmd, $_value);
 		}
 	}
 
 	public function getStatistics() {
 		$result = $this->command('stats');
 		foreach (json_decode($result,true) as $key => $value) {
-			$this->updateCmd($key, $value);
+			$this->checkCmd($key, $value);
+			$this->checkAndUpdateCmd($_cmd, $_value);
 		}
 	}
 
-	public function updateCmd($_cmd, $_value) {
+	public function checkCmd($_cmd, $_value) {
 		$cmdtest = $this->getCmd(null, $_cmd);
 		if (!is_object($cmdtest)) {
 			$cmd = new candyCmd();
@@ -101,7 +103,6 @@ class candy extends eqLogic {
 			$cmd->setSubType('string');
 			$cmd->save();
 		}
-		$this->checkAndUpdateCmd($_cmd, $_value);
 	}
 
 	public function command($_key = 'status') {
