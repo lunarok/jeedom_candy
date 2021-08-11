@@ -27,38 +27,18 @@ class candy extends eqLogic {
 		}
 	}
 
-	public function loadCmdFromConf($type) {
-		if (!is_file(dirname(__FILE__) . '/../config/devices/' . $type . '.json')) {
-			return;
-		}
-		$content = file_get_contents(dirname(__FILE__) . '/../config/devices/' . $type . '.json');
-		if (!is_json($content)) {
-			return;
-		}
-		$device = json_decode($content, true);
-		if (!is_array($device) || !isset($device['commands'])) {
-			return true;
-		}
-		foreach ($device['commands'] as $command) {
-			$cmd = null;
-			foreach ($this->getCmd() as $liste_cmd) {
-				if ((isset($command['logicalId']) && $liste_cmd->getLogicalId() == $command['logicalId'])
-				|| (isset($command['name']) && $liste_cmd->getName() == $command['name'])) {
-					$cmd = $liste_cmd;
-					break;
-				}
-			}
-			if ($cmd == null || !is_object($cmd)) {
-				$cmd = new candyCmd();
-				$cmd->setEqLogic_id($this->getId());
-				utils::a2o($cmd, $command);
-				$cmd->save();
-			}
-		}
-	}
-
 	public function postAjax() {
-		$this->loadCmdFromConf('candy');
+		$cmdtest = $this->getCmd(null, 'online');
+		if (!is_object($cmdtest)) {
+			$cmd = new candyCmd();
+			$cmd->setName('Online');
+			$cmd->setEqLogic_id($this->id);
+			$cmd->setEqType('candy');
+			$cmd->setLogicalId('online');
+			$cmd->setType('info');
+			$cmd->setSubType('binary');
+			$cmd->save();
+		}
 	}
 
 	public function refresh() {
@@ -68,29 +48,38 @@ class candy extends eqLogic {
 
 	public function getKey() {
 		if ($this->getConfiguration('key', '0000') == '0000') {
-			$result = $this->command('key');
+			$result = $this->sendCommand('key');
+			if ($result == '') {
+				return;
+			}
 			$this->setConfiguration('key', $result);
 			$this->save();
 		}
 	}
 
 	public function getStatus() {
-		$result = $this->command('status');
+		$result = $this->sendCommand('status');
+		if ($result == '') {
+			return;
+		}
 		foreach (json_decode($result,true) as $key => $value) {
-			$this->checkCmd($key, $value);
-			$this->checkAndUpdateCmd($_cmd, $_value);
+			$this->checkCmd($key);
+			$this->checkAndUpdateCmd($key, $value);
 		}
 	}
 
 	public function getStatistics() {
-		$result = $this->command('stats');
+		$result = $this->sendCommand('stats');
+		if ($result == '') {
+			return;
+		}
 		foreach (json_decode($result,true) as $key => $value) {
-			$this->checkCmd($key, $value);
-			$this->checkAndUpdateCmd($_cmd, $_value);
+			$this->checkCmd($key);
+			$this->checkAndUpdateCmd($key, $value);
 		}
 	}
 
-	public function checkCmd($_cmd, $_value) {
+	public function checkCmd($_cmd) {
 		$cmdtest = $this->getCmd(null, $_cmd);
 		if (!is_object($cmdtest)) {
 			$cmd = new candyCmd();
@@ -104,20 +93,20 @@ class candy extends eqLogic {
 		}
 	}
 
-	public function command($_key = 'status') {
-		if ($this->pingHost($this->getConfiguration('ip'))) {
+	public function sendCommand($_key = 'status') {
+		if ($this->pingHost()) {
 			$cmd = 'python3 ' . realpath(dirname(__FILE__) . '/../../resources') . '/candy.py ' . $this->getConfiguration('ip') . ' ' . $this->getConfiguration('key', '0000') . ' ' . $_key;
 			$result = shell_exec($cmd);
 			log::add('candy', 'debug', 'Cmd : ' . $cmd);
 			log::add('candy', 'debug', 'Result : ' . $result);
 			return $result;
 		} else {
-		  return '0000';
+		  return '';
 		}
 	}
 
-	public function pingHost($host, $timeout = 1) {
-	  exec(system::getCmdSudo() . "ping -c1 " . $host, $output, $return_var);
+	public function pingHost() {
+	  exec(system::getCmdSudo() . "ping -c1 " . $this->getConfiguration('ip'), $output, $return_var);
 	  if ($return_var == 0) {
 	    $result = true;
 	    $this->checkAndUpdateCmd('online', 1);
