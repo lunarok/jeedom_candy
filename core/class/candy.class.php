@@ -45,8 +45,10 @@ class candy extends eqLogic {
 
 	public function refresh() {
 		log::add('candy', 'debug', 'refresh');
-		$this->getStatus();
-		//$this->getStatistics();
+		if ($this->pingHost()) {
+			$this->getStatus();
+			//$this->getStatistics();
+		}
 	}
 
 	public function getKey() {
@@ -101,15 +103,11 @@ class candy extends eqLogic {
 	}
 
 	public function sendCommand($_key = 'status') {
-		if ($this->pingHost()) {
 			$cmd = 'python3 ' . realpath(dirname(__FILE__) . '/../../resources') . '/candy.py ' . $this->getConfiguration('ip') . ' ' . $this->getConfiguration('key', '0000') . ' ' . $_key;
 			$result = shell_exec($cmd);
 			log::add('candy', 'debug', 'Cmd : ' . $cmd);
 			log::add('candy', 'debug', 'Result : ' . $result);
 			return $result;
-		} else {
-		  return '';
-		}
 	}
 
 	public function pingHost() {
