@@ -103,7 +103,7 @@ class candy extends eqLogic {
 	}
 
 	public function sendCommand($_key = 'status') {
-			$cmd = 'python3 ' . realpath(dirname(__FILE__) . '/../../resources') . '/candy.py ' . $this->getConfiguration('ip') . ' ' . $this->getConfiguration('key', '0000') . ' ' . $_key;
+			$cmd = 'python3 ' . realpath(dirname(__FILE__) . '/../../resources') . '/candy.py ' . $this->getConfiguration('ip') . ' ' . trim($this->getConfiguration('key', '0000')) . ' ' . $_key;
 			$result = shell_exec($cmd);
 			log::add('candy', 'debug', 'Cmd : ' . $cmd);
 			log::add('candy', 'debug', 'Result : ' . $result);
