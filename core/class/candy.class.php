@@ -27,7 +27,7 @@ class candy extends eqLogic {
 		}
 	}
 
-	public function postAjax() {
+	public function preSave() {
 		$cmdtest = $this->getCmd(null, 'online');
 		if (!is_object($cmdtest)) {
 			$cmd = new candyCmd();
