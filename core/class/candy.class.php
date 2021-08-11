@@ -23,11 +23,13 @@ class candy extends eqLogic {
 	public static function cron5() {
 		$eqLogics = eqLogic::byType('candy', true);
 		foreach ($eqLogics as $eqLogic) {
+			log::add('candy', 'debug', 'cron5 ' . $eqLogic->getHumanName());
 			$eqLogic->refresh();
 		}
 	}
 
 	public function postSave() {
+		log::add('candy', 'debug', 'postSave');
 		$cmdtest = $this->getCmd(null, 'online');
 		if (!is_object($cmdtest)) {
 			$cmd = new candyCmd();
@@ -42,11 +44,13 @@ class candy extends eqLogic {
 	}
 
 	public function refresh() {
+		log::add('candy', 'debug', 'refresh');
 		$this->getStatus();
 		//$this->getStatistics();
 	}
 
 	public function getKey() {
+		log::add('candy', 'debug', 'getKey');
 		if ($this->getConfiguration('key', '0000') == '0000') {
 			$result = $this->sendCommand('key');
 			if ($result == '') {
@@ -58,6 +62,7 @@ class candy extends eqLogic {
 	}
 
 	public function getStatus() {
+		log::add('candy', 'debug', 'getStatus');
 		$result = $this->sendCommand('status');
 		if ($result == '') {
 			return;
@@ -80,6 +85,7 @@ class candy extends eqLogic {
 	}
 
 	public function checkCmd($_cmd) {
+		log::add('candy', 'debug', 'checkCmd');
 		$cmdtest = $this->getCmd(null, $_cmd);
 		if (!is_object($cmdtest)) {
 			$cmd = new candyCmd();
