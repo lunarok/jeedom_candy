@@ -64,6 +64,7 @@ class candy extends eqLogic {
 	public function getStatus() {
 		log::add('candy', 'debug', 'getStatus');
 		$result = $this->sendCommand('status');
+		log::add('candy', 'debug', 'Result : ' . $result);
 		if ($result == '') {
 			return;
 		}
