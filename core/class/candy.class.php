@@ -45,10 +45,8 @@ class candy extends eqLogic {
 
 	public function refresh() {
 		log::add('candy', 'debug', 'refresh');
-		if ($this->pingHost()) {
 			$this->getStatus();
 			//$this->getStatistics();
-		}
 	}
 
 	public function getKey() {
@@ -68,7 +66,10 @@ class candy extends eqLogic {
 		$result = $this->sendCommand('status');
 		log::add('candy', 'debug', 'Result : ' . $result);
 		if ($result == '') {
+			 $this->checkAndUpdateCmd('online', 0);
 			return;
+		} else {
+			$this->checkAndUpdateCmd('online', 1);
 		}
 		foreach (json_decode($result,true) as $key => $value) {
 			$this->checkCmd($key);
@@ -108,18 +109,6 @@ class candy extends eqLogic {
 			log::add('candy', 'debug', 'Cmd : ' . $cmd);
 			log::add('candy', 'debug', 'Result : ' . $result);
 			return $result;
-	}
-
-	public function pingHost() {
-	  exec(system::getCmdSudo() . "ping -c1 " . $this->getConfiguration('ip'), $output, $return_var);
-	  if ($return_var == 0) {
-	    $result = true;
-	    $this->checkAndUpdateCmd('online', 1);
-	  } else {
-	    $result = false;
-	    $this->checkAndUpdateCmd('online', 0);
-	  }
-	  return $result;
 	}
 }
 
