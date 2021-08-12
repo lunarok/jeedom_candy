@@ -20,13 +20,13 @@
 require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
 
 class candy extends eqLogic {
-	public static function cron5() {
+	/*public static function cron5() {
 		$eqLogics = eqLogic::byType('candy', true);
 		foreach ($eqLogics as $eqLogic) {
 			log::add('candy', 'debug', 'cron5 ' . $eqLogic->getHumanName());
 			$eqLogic->getStatus();
 		}
-	}
+	}*/
 
 	public function postSave() {
 		log::add('candy', 'debug', 'postSave');
