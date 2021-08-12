@@ -61,7 +61,6 @@ class candy extends eqLogic {
 		$result = $this->sendCommand('status');
 		if ($result == '') {
 			 $this->checkAndUpdateCmd('online', 0);
-			return;
 		} else {
 			$this->checkAndUpdateCmd('online', 1);
 		}
@@ -96,14 +95,6 @@ class candy extends eqLogic {
 }
 
 class candyCmd extends cmd {
-	public function execute($_options = null) {
-			if ($this->getType() == 'action') {
-				$eqLogic = $this->getEqLogic();
-				if ($this->getLogicalId() == 'refresh') {
-					$eqLogic->getStatus();
-					return;
-				}
-			}
-		}
+
 }
 ?>
