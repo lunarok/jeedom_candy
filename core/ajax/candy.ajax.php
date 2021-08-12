@@ -25,7 +25,17 @@ try {
   }
 
   if (init('action') == 'getKey') {
-    candy::getKey();
+    $id = 'unknow';
+    $parse = parse_url($_SERVER['HTTP_REFERER']);
+    $query = explode('&',$parse["query"]);
+    foreach ($query as $arg) {
+      $value = explode('=',$arg);
+      if ($value[0] == 'id') {
+        $id = $value[1];
+      }
+    }
+    $eqLogic = candy::byId($id);
+    $eqLogic->apiKey();
     ajax::success();
   }
 
