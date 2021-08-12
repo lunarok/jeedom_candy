@@ -85,7 +85,8 @@ class candy extends eqLogic {
 
 	public function sendCommand($_key) {
 			log::add('candy', 'debug', 'sendCommand');
-			exec('ping -n 1 ' . $this->getConfiguration('ip'), $output, $return_var);
+			exec('ping -c 1 ' . $this->getConfiguration('ip'), $output, $return_var);
+			log::add('candy', 'debug', 'ping result : ' . $return_var);
 			if ($return_var != 0) {
 				$this->checkAndUpdateCmd('online', 0);
 				log::add('candy', 'debug', 'notOnline');
