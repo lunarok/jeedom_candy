@@ -66,7 +66,7 @@ class candy extends eqLogic {
 		if ($result != '') {
 			log::add('candy', 'debug', 'content find');
 			$array = json_decode($result,true);
-			foreach ($array[0] as $key => $value) {
+			foreach ($array[array_key_first($array)] as $key => $value) {
 				log::add('candy', 'debug', 'info : ' . $key . ' ' . $value);
 				$this->checkCmd($key);
 				$this->checkAndUpdateCmd($key, $value);
