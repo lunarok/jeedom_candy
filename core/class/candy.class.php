@@ -41,6 +41,7 @@ class candy extends eqLogic {
 			$cmd->setSubType('binary');
 			$cmd->save();
 		}
+		$this->getStatus();
 	}
 
 	public function getKey() {
@@ -58,7 +59,6 @@ class candy extends eqLogic {
 	public function getStatus() {
 		log::add('candy', 'debug', 'getStatus');
 		$result = $this->sendCommand('status');
-		log::add('candy', 'debug', 'Result : ' . $result);
 		if ($result == '') {
 			 $this->checkAndUpdateCmd('online', 0);
 			return;
@@ -71,23 +71,12 @@ class candy extends eqLogic {
 		}
 	}
 
-	public function getStatistics() {
-		$result = $this->sendCommand('stats');
-		if ($result == '') {
-			return;
-		}
-		foreach (json_decode($result,true) as $key => $value) {
-			$this->checkCmd($key);
-			$this->checkAndUpdateCmd($key, $value);
-		}
-	}
-
 	public function checkCmd($_cmd) {
-		log::add('candy', 'debug', 'checkCmd');
+		log::add('candy', 'debug', 'checkCmd ' . $_cmd);
 		$cmdtest = $this->getCmd(null, $_cmd);
 		if (!is_object($cmdtest)) {
 			$cmd = new candyCmd();
-			$cmd->setName('Statistique ' . $_cmd);
+			$cmd->setName('Status ' . $_cmd);
 			$cmd->setEqLogic_id($this->id);
 			$cmd->setEqType('candy');
 			$cmd->setLogicalId($_cmd);
