@@ -24,7 +24,7 @@ class candy extends eqLogic {
 		$eqLogics = eqLogic::byType('candy', true);
 		foreach ($eqLogics as $eqLogic) {
 			log::add('candy', 'debug', 'cron5 ' . $eqLogic->getHumanName());
-			$eqLogic->refresh();
+			$eqLogic->getStatus();
 		}
 	}
 
@@ -41,12 +41,6 @@ class candy extends eqLogic {
 			$cmd->setSubType('binary');
 			$cmd->save();
 		}
-	}
-
-	public function refresh() {
-		log::add('candy', 'debug', 'refresh');
-			$this->getStatus();
-			//$this->getStatistics();
 	}
 
 	public function getKey() {
@@ -117,7 +111,7 @@ class candyCmd extends cmd {
 			if ($this->getType() == 'action') {
 				$eqLogic = $this->getEqLogic();
 				if ($this->getLogicalId() == 'refresh') {
-					$eqLogic->refresh();
+					$eqLogic->getStatus();
 					return;
 				}
 			}
