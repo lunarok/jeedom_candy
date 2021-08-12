@@ -24,7 +24,7 @@ class candy extends eqLogic {
 		$eqLogics = eqLogic::byType('candy', true);
 		foreach ($eqLogics as $eqLogic) {
 			log::add('candy', 'debug', 'cron5 ' . $eqLogic->getHumanName());
-			$eqLogic->getStatus();
+			$eqLogic->apiStatus();
 		}
 	}
 
@@ -41,9 +41,10 @@ class candy extends eqLogic {
 			$cmd->setSubType('binary');
 			$cmd->save();
 		}
+		$this->apiStatus();
 	}
 
-	public function getKey() {
+	public function apiKey() {
 		log::add('candy', 'debug', 'getKey');
 		if ($this->getConfiguration('key', '0000') == '0000') {
 			$result = $this->sendCommand('key');
@@ -55,7 +56,7 @@ class candy extends eqLogic {
 		}
 	}
 
-	public function getStatus() {
+	public function apiStatus() {
 		log::add('candy', 'debug', 'getStatus');
 		$result = $this->sendCommand('status');
 		if ($result != '') {
@@ -63,7 +64,7 @@ class candy extends eqLogic {
 			foreach (json_decode($result,true) as $key => $value) {
 				log::add('candy', 'debug', 'info : ' . $key . ' ' . $value);
 				$this->checkCmd($key);
-				//$this->checkAndUpdateCmd($key, $value);
+				$this->checkAndUpdateCmd($key, $value);
 			}
 		}
 	}
@@ -88,11 +89,11 @@ class candy extends eqLogic {
 			exec('ping -c 1 ' . $this->getConfiguration('ip'), $output, $return_var);
 			log::add('candy', 'debug', 'ping result : ' . $return_var);
 			if ($return_var != 0) {
-				//$this->checkAndUpdateCmd('online', 0);
+				$this->checkAndUpdateCmd('online', 0);
 				log::add('candy', 'debug', 'notOnline');
 				return '';
 			} else {
-				//$this->checkAndUpdateCmd('online', 1);
+				$this->checkAndUpdateCmd('online', 1);
 				$cmd = 'python3 ' . realpath(dirname(__FILE__) . '/../../resources') . '/candy.py ' . $this->getConfiguration('ip') . ' ' . trim($this->getConfiguration('key', '0000')) . ' ' . $_key;
 				$result = shell_exec($cmd);
 				log::add('candy', 'debug', 'Cmd : ' . $cmd);

@@ -50,7 +50,7 @@ $eqLogics = eqLogic::byType('candy');
         $opacity = ($eqLogic->getIsEnable()) ? '' : jeedom::getConfiguration('eqLogic:style:noactive');
         echo '<div class="eqLogicDisplayCard cursor" data-eqLogic_id="' . $eqLogic->getId() . '" style="background-color : #ffffff ; height : 200px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px;' . $opacity . '" >';
         echo "<center>";
-        echo '<img src="plugins/systembridge/plugin_info/systembridge_icon.png" height="105" width="95" />';
+        echo '<img src="plugins/candy/plugin_info/candy_icon.png" height="105" width="95" />';
         echo "</center>";
         echo '<span style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;"><center>' . $eqLogic->getHumanName(true, true) . '</center></span>';
         echo '</div>';
@@ -76,7 +76,7 @@ $eqLogics = eqLogic::byType('candy');
               <label class="col-sm-3 control-label">{{Nom de l'équipement}}</label>
               <div class="col-sm-3">
                 <input type="text" class="eqLogicAttr form-control" data-l1key="id" style="display : none;" />
-                <input type="text" class="eqLogicAttr form-control" data-l1key="name" placeholder="{{Nom de l'équipement systembridge}}"/>
+                <input type="text" class="eqLogicAttr form-control" data-l1key="name" placeholder="{{Nom de l'équipement candy}}"/>
               </div>
             </div>
             <div class="form-group">
@@ -114,16 +114,25 @@ $eqLogics = eqLogic::byType('candy');
             </div>
 
             <div class="form-group">
-              <label class="col-sm-3 control-label">{{IP de l'équipelent System Bridge}}</label>
+              <label class="col-sm-3 control-label">IP de l'appareil</label>
               <div class="col-sm-3">
                 <input type="text"  class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="ip" />
               </div>
             </div>
 
             <div class="form-group">
-              <label class="col-sm-3 control-label">{{API Key de l'équipelent System Bridge}}</label>
+              <label class="col-sm-3 control-label">Clef de chiffrage</label>
               <div class="col-sm-3">
-                <input type="text"  class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="key" />
+                <span class="eqLogicAttr" data-l1key="configuration" data-l2key="key"></span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-3 control-label">Récupérer la clef</label>
+              <div class="col-sm-3">
+                <span class="input-group-btn">
+          				<a class="btn btn-primary btn-sm eqLogicAction syncinfo roundedLeft" id="bt_getKey"><i class="fas fa-spinner" title="{{Récupérer la clef}}"></i> {{Récupérer la clef}}</a>
+          			</span>
               </div>
             </div>
 
@@ -153,5 +162,5 @@ $eqLogics = eqLogic::byType('candy');
   </div>
 </div>
 
-<?php include_file('desktop', 'systembridge', 'js', 'systembridge'); ?>
+<?php include_file('desktop', 'candy', 'js', 'candy'); ?>
 <?php include_file('core', 'plugin.template', 'js'); ?>
