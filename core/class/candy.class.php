@@ -20,13 +20,13 @@
 require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
 
 class candy extends eqLogic {
-	/*public static function cron5() {
+	public static function cron5() {
 		$eqLogics = eqLogic::byType('candy', true);
 		foreach ($eqLogics as $eqLogic) {
 			log::add('candy', 'debug', 'cron5 ' . $eqLogic->getHumanName());
 			$eqLogic->getStatus();
 		}
-	}*/
+	}
 
 	public function postSave() {
 		log::add('candy', 'debug', 'postSave');
@@ -41,7 +41,6 @@ class candy extends eqLogic {
 			$cmd->setSubType('binary');
 			$cmd->save();
 		}
-		$this->getStatus();
 	}
 
 	public function getKey() {
@@ -59,14 +58,13 @@ class candy extends eqLogic {
 	public function getStatus() {
 		log::add('candy', 'debug', 'getStatus');
 		$result = $this->sendCommand('status');
-		if ($result == '') {
-			 $this->checkAndUpdateCmd('online', 0);
-		} else {
-			$this->checkAndUpdateCmd('online', 1);
-		}
-		foreach (json_decode($result,true) as $key => $value) {
-			$this->checkCmd($key);
-			$this->checkAndUpdateCmd($key, $value);
+		if ($result != '') {
+			log::add('candy', 'debug', 'content find');
+			foreach (json_decode($result,true) as $key => $value) {
+				log::add('candy', 'debug', 'info : ' . $key . ' ' . $value);
+				$this->checkCmd($key);
+				$this->checkAndUpdateCmd($key, $value);
+			}
 		}
 	}
 
@@ -85,12 +83,22 @@ class candy extends eqLogic {
 		}
 	}
 
-	public function sendCommand($_key = 'status') {
-			$cmd = 'python3 ' . realpath(dirname(__FILE__) . '/../../resources') . '/candy.py ' . $this->getConfiguration('ip') . ' ' . trim($this->getConfiguration('key', '0000')) . ' ' . $_key;
-			$result = shell_exec($cmd);
-			log::add('candy', 'debug', 'Cmd : ' . $cmd);
-			log::add('candy', 'debug', 'Result : ' . $result);
-			return $result;
+	public function sendCommand($_key) {
+			log::add('candy', 'debug', 'sendCommand');
+			exec('ping -n 1 ' . $this->getConfiguration('ip'), $output, $return_var);
+			if ($return_var != 0) {
+				$this->checkAndUpdateCmd('online', 0);
+				log::add('candy', 'debug', 'notOnline');
+				return '';
+			} else {
+				$this->checkAndUpdateCmd('online', 1);
+				$cmd = 'python3 ' . realpath(dirname(__FILE__) . '/../../resources') . '/candy.py ' . $this->getConfiguration('ip') . ' ' . trim($this->getConfiguration('key', '0000')) . ' ' . $_key;
+				$result = shell_exec($cmd);
+				log::add('candy', 'debug', 'Cmd : ' . $cmd);
+				log::add('candy', 'debug', 'Result : ' . $result);
+				return $result;
+			}
+
 	}
 }
 
