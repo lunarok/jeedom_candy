@@ -58,6 +58,10 @@ class candy extends eqLogic {
 
 	public function apiStatus() {
 		log::add('candy', 'debug', 'getStatus');
+		if (trim($this->getConfiguration('key', '0000')) == '0000') {
+			log::add('candy', 'debug', 'key not registered');
+			return;
+		}
 		$result = $this->sendCommand('status');
 		if ($result != '') {
 			log::add('candy', 'debug', 'content find');

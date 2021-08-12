@@ -30,6 +30,7 @@
        return;
      }
      modifyWithoutSave=false;
+     location.reload();
    }
  });
 });
