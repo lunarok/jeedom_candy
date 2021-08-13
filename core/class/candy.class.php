@@ -24,7 +24,7 @@ class candy extends eqLogic {
 		$eqLogics = eqLogic::byType('candy', true);
 		foreach ($eqLogics as $eqLogic) {
 			log::add('candy', 'debug', 'cron5 ' . $eqLogic->getHumanName());
-			$eqLogic->apiStatus();
+			$eqLogic->refresh();
 		}
 	}
 
@@ -41,6 +41,23 @@ class candy extends eqLogic {
 			$cmd->setSubType('binary');
 			$cmd->save();
 		}
+		$cmdtest = $this->getCmd(null, 'action');
+		if (!is_object($cmdtest)) {
+			$cmd = new candyCmd();
+			$cmd->setName('Commande');
+			$cmd->setEqLogic_id($this->id);
+			$cmd->setEqType('candy');
+			$cmd->setLogicalId('action');
+			$cmd->setType('action');
+			$cmd->setSubType('message');
+			$cmd->setDisplay('message_disable',1);
+			$cmd->setDisplay('title_placeholder',"Commande à envoyer");
+			$cmd->save();
+		}
+		$this->refresh();
+	}
+
+	public function refresh() {
 		$this->apiStatus();
 	}
 
@@ -99,17 +116,47 @@ class candy extends eqLogic {
 				return '';
 			} else {
 				$this->checkAndUpdateCmd('online', 1);
+				if (in_array($_key, $array("key", "status", "stats")))  {
+					$cmd = 'python3 ' . realpath(dirname(__FILE__) . '/../../resources') . '/candy.py ' . $this->getConfiguration('ip') . ' ' . trim($this->getConfiguration('key', '0000')) . ' ' . $_key;
+				} else {
+					$cmd = 'python3 ' . realpath(dirname(__FILE__) . '/../../resources') . '/candyAct.py ' . $this->getConfiguration('ip') . ' ' . trim($this->getConfiguration('key', '0000')) . ' ' . $_key;
+				}
+				$result = shell_exec($cmd);
+				log::add('candy', 'debug', 'Cmd : ' . $cmd);
+				log::add('candy', 'debug', 'Result : ' . $result);
+				return $result;
+			}
+	}
+
+	public function sendAction($_action) {
+			log::add('candy', 'debug', 'sendAction');
+			exec('ping -c 1 ' . $this->getConfiguration('ip'), $output, $return_var);
+			log::add('candy', 'debug', 'ping result : ' . $return_var);
+			if ($return_var != 0) {
+				$this->checkAndUpdateCmd('online', 0);
+				log::add('candy', 'debug', 'notOnline');
+				return '';
+			} else {
+				$this->checkAndUpdateCmd('online', 1);
 				$cmd = 'python3 ' . realpath(dirname(__FILE__) . '/../../resources') . '/candy.py ' . $this->getConfiguration('ip') . ' ' . trim($this->getConfiguration('key', '0000')) . ' ' . $_key;
 				$result = shell_exec($cmd);
 				log::add('candy', 'debug', 'Cmd : ' . $cmd);
 				log::add('candy', 'debug', 'Result : ' . $result);
 				return $result;
 			}
-
 	}
 }
 
 class candyCmd extends cmd {
-
+	public function execute($_options = null) {
+			if ($this->getType() == 'action') {
+				$eqLogic = $this->getEqLogic();
+				if ($this->getLogicalId() == 'refresh') {
+					$eqLogic->refresh();
+					return;
+				}
+				$eqLogic->sendCommand($_options['title']);
+			}
+		}
 }
 ?>
