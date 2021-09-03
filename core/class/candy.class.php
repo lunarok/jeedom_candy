@@ -139,7 +139,7 @@ class candy extends eqLogic {
 			} else {
 				$this->checkAndUpdateCmd('online', 1);
 				$cmd = 'python3 ' . realpath(dirname(__FILE__) . '/../../resources') . '/candy.py ' . $this->getConfiguration('ip') . ' ' . trim($this->getConfiguration('key', '0000')) . ' ' . $_key;
-				$result = shell_exec($cmd);
+				$result = utf8_encode(shell_exec($cmd));
 				log::add('candy', 'debug', 'Cmd : ' . $cmd);
 				log::add('candy', 'debug', 'Result : ' . $result);
 				return $result;
