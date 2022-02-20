@@ -117,9 +117,9 @@ class candy extends eqLogic {
 			} else {
 				$this->checkAndUpdateCmd('online', 1);
 				if (in_array($_key, array("key", "status", "stats")))  {
-					$cmd = 'python3 ' . realpath(dirname(__FILE__) . '/../../resources') . '/candy.py ' . $this->getConfiguration('ip') . ' ' . trim($this->getConfiguration('key', '0000')) . ' ' . $_key;
+					$cmd = 'python3 ' . realpath(dirname(__FILE__) . '/../../resources') . '/candy.py ' . $this->getConfiguration('ip') . ' ' . trim($this->getConfiguration('key', '0000')) . ' ' . $_key . ' 2> /dev/null';
 				} else {
-					$cmd = 'python3 ' . realpath(dirname(__FILE__) . '/../../resources') . '/candyAct.py ' . $this->getConfiguration('ip') . ' ' . trim($this->getConfiguration('key', '0000')) . ' ' . $_key;
+					$cmd = 'python3 ' . realpath(dirname(__FILE__) . '/../../resources') . '/candyAct.py ' . $this->getConfiguration('ip') . ' ' . trim($this->getConfiguration('key', '0000')) . ' ' . $_key . ' 2> /dev/null';
 				}
 				$result = shell_exec($cmd);
 				log::add('candy', 'debug', 'Cmd : ' . $cmd);
